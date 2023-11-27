@@ -1,0 +1,5 @@
+REQUIRE : express && socket.io 
+- npm install express socket.io
+
+TO START : node index.js
+TO USE : localhost:3000

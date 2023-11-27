@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat App</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+        h1 {
+            text-align: center;
+            font-size: 50px;
+        }
+
+        body {
+            overflow: hidden;
+            background-image: linear-gradient(rgba(161, 121, 0, 0.39),black);
+
+        }
+        .container {
+            width: 200vh;
+            height: 100vh;
+            position: relative;
+        }
+
+        ul{
+            position: absolute;
+            background-color: rgba(0, 0, 0, 0.412);
+            width: 964px;
+            height: 600px;
+            left: 480px;
+            top: 50px;
+            font-size: 32px;
+            padding: 30px 60px;
+            line-height: 1.5;
+            overflow-y: scroll;
+            color: white;
+        }
+
+        .input-range {
+            background-color: green;
+            position: fixed;
+            top: 760px;
+            left: 480px;
+            display: flex;
+        }
+
+        input {
+            width: 980px;
+            height: 30px;
+            font-size: 32px;
+            padding: 10px;
+            word-wrap: break-word;
+        }
+
+        button {
+            width: 80px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>AppChat</h1>
+    <div class="container">
+        <form id="chat-form">
+            <ul id="messages"></ul>
+            <div class="input-range">
+                <input id="input-mes" type="text">
+                <button id="send-mes">Send</button>
+            </div>
+        </form>
+    </div>
+</body>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    const chatMes = document.getElementById('input-mes');
+    const chatForm = document.getElementById('chat-form');
+    const messages = document.getElementById('messages');
+    const name = prompt("Nhập tên của bạn!");
+    const socket = io();
+
+    chatForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const message = chatMes.value;
+        if (!message) return;
+        socket.emit('on-chat', {
+            name,
+            message
+        });
+        chatMes.value = '';
+    })
+
+    socket.on('user-chat', (data) => {
+        const chatItem = document.createElement('li');
+        console.log(data.message);
+        if(data.name == null) data.name = "Anonymous";
+        chatItem.textContent = `${data.name} : ${data.message}`;
+        messages.appendChild(chatItem);
+        messages.scrollTop = messages.scrollHeight;
+    });
+</script>
+</html>
